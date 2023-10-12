@@ -1,0 +1,29 @@
+<!-- views/stocks.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocks List</title>
+</head>
+<body>
+    <h1>Stocks List</h1>
+    <ul id="stocks-list"></ul>
+
+    <script>
+        // Mengambil data dari server menggunakan AJAX
+        fetch('/stocks')
+            .then(response => response.json())
+            .then(data => {
+                // Menampilkan data pada halaman HTML
+                const stocksList = document.getElementById('stocks-list');
+                data.forEach(stock => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${stock.ID} - ${stock.NamaBarang} - ${stock.Jumlah}`;
+                    stocksList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>

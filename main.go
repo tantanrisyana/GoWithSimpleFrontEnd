@@ -2,11 +2,14 @@
 package main
 
 import (
+	"fmt"
 	"gudang/controllers"
 	"gudang/db"
 	"html/template"
 	"io"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -20,18 +23,16 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 }
 
 func main() {
-	// Initialize Echo instance
+	loadEnv()
+	db.InitDB()
 	e := echo.New()
 
 	// Middleware
-	e.Use(middleware.Logger())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Output: os.Stdout,
+	}))
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
-
-	// Database initialization
-	if _, err := db.InitDB(); err != nil {
-		e.Logger.Fatal(err)
-	}
 
 	// Renderer
 	renderer := &TemplateRenderer{
@@ -45,9 +46,15 @@ func main() {
 	e.POST("/stocks", controllers.CreateStock)
 	e.PUT("/stocks/:id", controllers.UpdateStock)
 	e.DELETE("/stocks/:id", controllers.DeleteStock)
-	//e.GET("/", controllers.)
-	e.GET("/stocks", controllers.GetStocks) // Tambahkan route untuk endpoint /stocks
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8000"))
+}
+
+func loadEnv() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Printf("Error loading .env file: %s\n", err)
+		os.Exit(1)
+	}
 }

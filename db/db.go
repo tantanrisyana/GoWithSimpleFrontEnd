@@ -3,6 +3,7 @@ package db
 
 import (
 	"gudang/models"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -14,7 +15,8 @@ var (
 
 func InitDB() (*gorm.DB, error) {
 	var err error
-	DB, err = gorm.Open("mysql", "root:@tcp(localhost:3306)/warehouse?parseTime=true")
+
+	DB, err = gorm.Open("mysql", os.Getenv("DB_string"))
 	if err != nil {
 		return nil, err
 	}

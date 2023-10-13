@@ -12,7 +12,8 @@ import (
 
 func GetStocks(c echo.Context) error {
 	var stocks []models.Stock
-	if err := db.DB.Find(&stocks).Error; err != nil {
+
+	if err := db.DB.Order("created_at desc").Find(&stocks).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, stocks)
